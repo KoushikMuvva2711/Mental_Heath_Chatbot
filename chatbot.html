@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mental Health Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
+        #chat { border: 1px solid #ccc; padding: 10px; min-height: 300px; }
+        .user { color: blue; }
+        .bot { color: green; }
+        #inputArea { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Mental Health Chatbot</h2>
+    <div id="chat"></div>
+    <div id="inputArea">
+        <input type="text" id="userInput" placeholder="Type your question..." style="width:80%;">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const chat = document.getElementById("chat");
+            const message = input.value.trim();
+            if (!message) return;
+            chat.innerHTML += `<div class="user"><b>You:</b> ${message}</div>`;
+            input.value = "";
+            chat.scrollTop = chat.scrollHeight;
+
+            const response = await fetch('http://127.0.0.1:8000/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: message })
+            });
+            const data = await response.json();
+            chat.innerHTML += `<div class="bot"><b>Bot:</b> ${data.answer}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+</body>
+</html>
